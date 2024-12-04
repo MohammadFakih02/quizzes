@@ -3,12 +3,12 @@ import { quizContext } from "../context/quizContext";
 import QuizCard from "../components/QuizCard";
 
 const Quizzes = () => {
-  const { quizzes } = useContext(quizContext);
+  const { quizzes, user } = useContext(quizContext);
 
   return (
     <div className="quizzes-container">
       {quizzes.map((quiz) => (
-        <QuizCard quiz={quiz} key={quiz.name} />
+        <QuizCard quiz={quiz} user={user} key={quiz.name} />
       ))}
     </div>
   );

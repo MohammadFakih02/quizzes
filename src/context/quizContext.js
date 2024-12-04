@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect } from "react";
+import Navbar from "../components/Navbar";
 
 export const quizContext = createContext();
 
@@ -51,6 +52,7 @@ const QuizProvider = ({ children }) => {
 
   return (
     <quizContext.Provider value={{ quizzes, setQuizzes, user, setUser }}>
+      <Navbar />
       {children}
     </quizContext.Provider>
   );
