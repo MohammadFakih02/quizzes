@@ -2,6 +2,8 @@ import React, { useContext, useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { quizContext } from "../context/quizContext";
 import Button from "../components/Button";
+import Question from "../components/Question";
+import Results from "../components/Results";
 
 const QuizDetails = () => {
   const { id } = useParams();
@@ -9,7 +11,7 @@ const QuizDetails = () => {
   const [currentQuiz, setCurrentQuiz] = useState(null);
   const [answers, setAnswers] = useState([]); 
   const [completed, setCompleted] = useState(false);
-  const [results, setResults] = useState([]);
+  const [results, setResultsData] = useState([]);
   const [score, setScore] = useState(0);
   const navigate = useNavigate();
 
@@ -58,7 +60,7 @@ const QuizDetails = () => {
       });
       setQuizzes(updatedQuizzes);
 
-      setResults(newResults);
+      setResultsData(newResults);
       setScore(currentScore);
       setCompleted(true);
     }
@@ -78,22 +80,14 @@ const QuizDetails = () => {
       <p>{currentQuiz.description}</p>
 
       {currentQuiz.questions.map((question, index) => (
-        <div key={index} className="question-container">
-          <p>{question.question}</p>
-          {question.answers.map((answer, ansIndex) => (
-            <label key={ansIndex}>
-              <input
-                type="radio"
-                name={`question-${index}`}
-                value={answer}
-                checked={answers[index] === answer}
-                onChange={() => handleAnswerChange(index, answer)}
-                disabled={completed}
-              />
-              {answer}
-            </label>
-          ))}
-        </div>
+        <Question
+          key={index}
+          question={question}
+          index={index}
+          answers={answers}
+          handleAnswerChange={handleAnswerChange}
+          completed={completed}
+        />
       ))}
 
       <Button
@@ -101,22 +95,8 @@ const QuizDetails = () => {
         onClick={completed ? handleBackToQuizzes : handleSubmit}
         disabled={completed}
       />
-      
-      {completed && (
-        <div className="quiz-results">
-          <p><strong>Your Score: </strong>{score} / {currentQuiz.points}</p>
-          <div className="results-details">
-            {results.map((result, index) => (
-              <div key={index} className={`result-item ${result.isCorrect ? "correct" : "incorrect"}`}>
-                <p>{result.question}</p>
-                <p><strong>Your answer: </strong>{result.userAnswer}</p>
-                <p><strong>Correct answer: </strong>{result.correctAnswer}</p>
-                {!result.isCorrect && <p className="incorrect-feedback">Incorrect answer</p>}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+
+      {completed && <Results results={results} score={score} totalPoints={currentQuiz.points} />}
     </div>
   );
 };
