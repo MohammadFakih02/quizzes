@@ -13,3 +13,5 @@ const QuizCard = ({ quiz }) => {
         </div>
     )
 }
+
+export default QuizCard;

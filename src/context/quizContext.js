@@ -1,8 +1,8 @@
-import { Children, createContext,useEffect,useState } from "react";
+import {createContext,useEffect,useState } from "react";
 
 export const quizContext= createContext();
 
-const QuizProvider = ()=>{
+const QuizProvider = ({ children })=>{
     const [quizzes,setQuizzes]=useState([{
         name: "Math Quiz",
         description: "A simple math quiz to test your arithmetic skills.",
@@ -58,14 +58,12 @@ const QuizProvider = ()=>{
     useEffect(()=>{
         getQuizzes();
     },[]);
-
-
-    setQuizzes()
     
 
     return(
-        <projectContext.Provider value={{projects,user}}>
-            {Children}
-        </projectContext.Provider>
+        <quizContext.Provider value={{quizzes,user}}>
+        {children}
+        </quizContext.Provider>
     )
 }
+export default QuizProvider

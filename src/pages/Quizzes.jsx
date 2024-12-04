@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import QuizCard from "../components/QuizCard"
+import {quizContext} from "../context/quizContext";
 
 const Quizzes = ()=>{
+    const {quizzes} = useContext(quizContext);
     return(
         <div className="quizzes-containter">
             {quizzes.map((q)=>(
