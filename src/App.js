@@ -2,6 +2,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import './App.css';
 import Quizzes from "./pages/Quizzes"
 import QuizProvider from "./context/quizContext";
+import QuizDetails from "./pages/QuizDetails";
+
 
 
 function App() {
@@ -11,6 +13,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Quizzes />} />
+            <Route path="/quiz/:id" element={<QuizDetails />} />
           </Routes>
         </BrowserRouter>
       </QuizProvider>
