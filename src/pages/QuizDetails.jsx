@@ -9,12 +9,15 @@ const QuizDetails = () => {
   const [currentQuiz, setCurrentQuiz] = useState(null);
   const [answers, setAnswers] = useState([]); 
   const [completed, setCompleted] = useState(false);
+  const [results, setResults] = useState([]);
+  const [score, setScore] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
     const quiz = quizzes.find((quiz) => quiz.name === id);
     if (quiz) {
       setCurrentQuiz(quiz);
+      setCompleted(quiz.completed);
     }
   }, [id, quizzes]);
 
@@ -25,19 +28,26 @@ const QuizDetails = () => {
   };
 
   const handleSubmit = () => {
-    if (currentQuiz) {
-      let score = 0;
-      
+    if (currentQuiz && !completed) {
+      let currentScore = 0;
+      const newResults = [];
+
       const pointsPerQuestion = currentQuiz.points / currentQuiz.questions.length;
 
       currentQuiz.questions.forEach((question, index) => {
-        if (answers[index] === question.correctAnswer) {
-          score += pointsPerQuestion;
+        const isCorrect = answers[index] === question.correctAnswer;
+        if (isCorrect) {
+          currentScore += pointsPerQuestion;
         }
+        newResults.push({
+          question: question.question,
+          userAnswer: answers[index],
+          correctAnswer: question.correctAnswer,
+          isCorrect: isCorrect,
+        });
       });
 
-      const updatedUser = { ...user, points: user.points + score };
-      console.log(updatedUser);
+      const updatedUser = { ...user, points: user.points + currentScore };
       setUser(updatedUser);
 
       const updatedQuizzes = quizzes.map((quiz) => {
@@ -48,20 +58,25 @@ const QuizDetails = () => {
       });
       setQuizzes(updatedQuizzes);
 
+      setResults(newResults);
+      setScore(currentScore);
       setCompleted(true);
-      navigate("/");
     }
   };
 
+  const handleBackToQuizzes = () => {
+    navigate("/");
+  };
+
   if (!currentQuiz) {
-    return <div>Loading...</div>;
+    return <div className="loading">Loading...</div>;
   }
 
   return (
     <div className="quiz-details-container">
       <h1>{currentQuiz.name}</h1>
       <p>{currentQuiz.description}</p>
-      
+
       {currentQuiz.questions.map((question, index) => (
         <div key={index} className="question-container">
           <p>{question.question}</p>
@@ -73,15 +88,35 @@ const QuizDetails = () => {
                 value={answer}
                 checked={answers[index] === answer}
                 onChange={() => handleAnswerChange(index, answer)}
+                disabled={completed}
               />
               {answer}
             </label>
           ))}
         </div>
       ))}
+
+      <Button
+        text={completed ? "Back to Quizzes" : "Submit Quiz"}
+        onClick={completed ? handleBackToQuizzes : handleSubmit}
+        disabled={completed}
+      />
       
-      <Button text="Submit Quiz" onClick={handleSubmit} />
-      {completed && <p>Quiz Completed! Your points have been updated.</p>}
+      {completed && (
+        <div className="quiz-results">
+          <p><strong>Your Score: </strong>{score} / {currentQuiz.points}</p>
+          <div className="results-details">
+            {results.map((result, index) => (
+              <div key={index} className={`result-item ${result.isCorrect ? "correct" : "incorrect"}`}>
+                <p>{result.question}</p>
+                <p><strong>Your answer: </strong>{result.userAnswer}</p>
+                <p><strong>Correct answer: </strong>{result.correctAnswer}</p>
+                {!result.isCorrect && <p className="incorrect-feedback">Incorrect answer</p>}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

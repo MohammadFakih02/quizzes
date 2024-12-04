@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Button from "./Button"; // Assuming you already have a Button component
+import Button from "./Button";
 
 const QuizCard = ({ quiz }) => {
   return (
@@ -9,10 +9,13 @@ const QuizCard = ({ quiz }) => {
       <p>{quiz.description}</p>
       <p>Points: {quiz.points}</p>
 
-      {/* Button to navigate to the quiz details page */}
-      <Link to={`/quiz/${quiz.name}`}>
-        <Button text="Start Quiz" onClick={() => {}} />
-      </Link>
+      {!quiz.completed ? (
+        <Link to={`/quiz/${quiz.name}`}>
+          <Button text="Start Quiz" onClick={() => {}} />
+        </Link>
+      ) : (
+        <Button text="Quiz Completed" onClick={() => {}} disabled />
+      )}
     </div>
   );
 };
